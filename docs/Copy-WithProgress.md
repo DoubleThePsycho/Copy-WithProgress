@@ -11,25 +11,25 @@ schema: 2.0.0
 Runs robocopy.exe paired up with a progress bar.
 
 ## DESCRIPTION
-Uses RoboCopy to copy a single or multiple folders, while displaying a dunamic progress bar.
+Uses RoboCopy to copy a single or multiple folders, while displaying a dynamic progress bar.
 
 ## SYNTAX
 
 ### Single (Default)
 ```powershell
-Copy-WithProgress [-Source] <String> [-Destination] <String> [-ReportGap <Int32>] [<CommonParameters>]
+Copy-WithProgress [-Source] <String> [-Destination] <String> [-Name <String>] [-TimeOut <Int32>] [-ReportGap <Int32>] [<CommonParameters>]
 ```
 
 ### Multiple
 ```powershell
-Copy-WithProgress -Object <ArrayList> [-ReportGap <Int32>] [<CommonParameters>]
+Copy-WithProgress -Object <ArrayList> [-TimeOut <Int32>] [-ReportGap <Int32>] [<CommonParameters>]
 ```
 
 ## EXAMPLES
 
 ### Example 1 - Copy a single folder.
 ```powershell
-PS C:\> Copy-WithProgress -Source [SourcePath] -Destination [DestinationPath]
+PS C:\> Copy-WithProgress -Source [SourcePath] -Destination [DestinationPath] -Name [JobName]
 ```
 
 ```
@@ -79,6 +79,21 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
+### -Name
+For single copy job, name to display in the progress bar.
+
+```yaml
+Type: String
+Parameter Sets: Single
+Aliases:
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
 ### -Object
 For multiple copy jobs, a list of names, sources and destinations.
 
@@ -91,6 +106,24 @@ Required: True
 Position: Named
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -TimeOut
+Set a timeout for how long to attempt a job before giving up and proceeding.
+
+Some files/folders will not copy if the application is active, this is a bypass.
+If not specified, RoboCopy will keep on trying to copy the files forever.
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

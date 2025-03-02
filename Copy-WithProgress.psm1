@@ -26,6 +26,14 @@ function Copy-WithProgress
 		[System.String]
 		${Destination},
 
+		#MARK: Source
+		[Parameter(
+			Position = 2,
+			ParameterSetName = "Single"
+		)]
+		[System.String]
+		${Name} = 'Single job',
+
 		#MARK: Object
 		[Parameter(
 			Mandatory,
@@ -34,6 +42,11 @@ function Copy-WithProgress
 		)]
 		[System.Collections.ArrayList]
 		${Object},
+
+		#MARK: ReportGap
+		[Parameter()]
+		[System.Int32]
+		${TimeOut},
 
 		#MARK: ReportGap
 		[Parameter()]
@@ -69,12 +82,11 @@ function Copy-WithProgress
 
 	if ($PSCmdlet.ParameterSetName -eq 'Single')
 	{
-
 		[System.Collections.ArrayList]$Object = @()
 
 		#	Create item for entry.
 		$NewEntry = [PSCustomObject]@{
-			Name        = "Single job"
+			Name        = $Name
 			Source      = $Source
 			Destination = $Destination
 		}
@@ -107,9 +119,9 @@ function Copy-WithProgress
 
 	$GrandTotalFileCount = 0
 	$GrandBytesTotal = 0
+
 	for ($i = 0; $i -lt $Object.Count; $i++)
 	{
-
 		#	Verbose message.
 		Write-Verbose -Message "Analyzing RoboCopy job..."
 
@@ -189,7 +201,6 @@ function Copy-WithProgress
 
 	for ($i = 0; $i -lt $Object.Count; $i++)
 	{
-
 		$RobocopyLogPath = [System.IO.Path]::GetTempFileName()
 
 		#	The Redirect Output Path is needed so that RoboCopy does not echo to the main screen.
@@ -210,6 +221,9 @@ function Copy-WithProgress
 		Write-Verbose -Message ("Beginning the RoboCopy process with arguments: {0}" -f $ArgumentList)
 
 		$Robocopy = Start-Process -FilePath robocopy.exe -ArgumentList $ArgumentList -PassThru -NoNewWindow -RedirectStandardOutput $RedirectOutputPath @commonparams
+
+		#	Start stopwatch.
+		$RoboCopyStopWatch = [System.Diagnostics.Stopwatch]::StartNew()
 
 		do
 		{
@@ -258,7 +272,6 @@ function Copy-WithProgress
 			#	If you want a different progress bar for each, use -Id $($i+1) instead of -Id 1
 			if ($Object.Count -gt 1)
 			{
-
 				#	Splatting for progress bar.
 				$paramWriteProgress = @{
 					Activity        = ('Copying "{0}"' -f $Object[$i].Name)
@@ -271,6 +284,13 @@ function Copy-WithProgress
 				#	Update the main progress bar
 				Write-Progress @paramWriteProgress
 			}
+
+			if ($TimeOut -and ($RoboCopyStopWatch.Elapsed.TotalMilliseconds -ge $TimeOut))
+			{
+				Use-Speech ('RoboCopy is stuck on "{0}", skipping.' -f $Object[$i].Name) -Name Zira -SpeakAsync
+				$Robocopy | Stop-Process
+			}
+
 
 		} until ($Robocopy.HasExited)
 
