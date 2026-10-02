@@ -10,7 +10,10 @@
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Uses RoboCopy to copy a single or multiple folders, while displaying a dunamic progress bar.</maml:para>
+      <maml:para>Uses RoboCopy to copy a single or multiple folders, while displaying a dynamic progress bar.</maml:para>
+      <maml:para>Before copying, every job is scanned to count the files and bytes to copy. The main progress bar shows the progress of all jobs, and when copying several folders, a nested progress bar shows the current job.</maml:para>
+      <maml:para>By default the folders are mirrored with /MIR: files in the destination that no longer exist in the source are DELETED. Use -NoMirror to copy without deleting anything.</maml:para>
+      <maml:para>When done, one object per job is returned, telling if the job succeeded and how long it took.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -39,11 +42,34 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>ReportGap</maml:name>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+          <maml:name>Name</maml:name>
           <maml:description>
-            <maml:para>When copying to another network station, simulate lower speeds to get a proper look at the function in action.</maml:para>
-            <maml:para>(I have not been able to test this to see if it works.)</maml:para>
+            <maml:para>For single copy job, name to display in the progress bar and in the returned object.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+          <dev:type>
+            <maml:name>String</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>Single job</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>NoMirror</maml:name>
+          <maml:description>
+            <maml:para>Copy with /E instead of /MIR, so files in the destination that do not exist in the source are kept instead of deleted.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>TimeOut</maml:name>
+          <maml:description>
+            <maml:para>Set a timeout, in seconds, for how long to attempt a job before giving up and proceeding.</maml:para>
+            <maml:para>Some files/folders will not copy if the application is active, this is a bypass. If not specified, RoboCopy will keep on trying to copy the files forever. A job that times out is returned with Success set to $false.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
           <dev:type>
@@ -52,13 +78,26 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>ReportGap</maml:name>
+          <maml:description>
+            <maml:para>How many milliseconds to wait between each progress bar update.</maml:para>
+            <maml:para>Lower values update the progress bar more often, at the cost of more CPU use.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>200</dev:defaultValue>
+        </command:parameter>
       </command:syntaxItem>
       <command:syntaxItem>
         <maml:name>Copy-WithProgress</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
           <maml:name>Object</maml:name>
           <maml:description>
-            <maml:para>For multiple copy jobs, a list of names, sources and destinations.</maml:para>
+            <maml:para>For multiple copy jobs, a list of hashtables or objects with the properties Name, Source and Destination.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">ArrayList</command:parameterValue>
           <dev:type>
@@ -68,10 +107,21 @@
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-          <maml:name>ReportGap</maml:name>
+          <maml:name>NoMirror</maml:name>
           <maml:description>
-            <maml:para>When copying to another network station, simulate lower speeds to get a proper look at the function in action.</maml:para>
-            <maml:para>(I have not been able to test this to see if it works.)</maml:para>
+            <maml:para>Copy with /E instead of /MIR, so files in the destination that do not exist in the source are kept instead of deleted.</maml:para>
+          </maml:description>
+          <dev:type>
+            <maml:name>SwitchParameter</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>False</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>TimeOut</maml:name>
+          <maml:description>
+            <maml:para>Set a timeout, in seconds, for how long to attempt a job before giving up and proceeding.</maml:para>
+            <maml:para>Some files/folders will not copy if the application is active, this is a bypass. If not specified, RoboCopy will keep on trying to copy the files forever. A job that times out is returned with Success set to $false.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
           <dev:type>
@@ -79,6 +129,19 @@
             <maml:uri />
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
+        </command:parameter>
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+          <maml:name>ReportGap</maml:name>
+          <maml:description>
+            <maml:para>How many milliseconds to wait between each progress bar update.</maml:para>
+            <maml:para>Lower values update the progress bar more often, at the cost of more CPU use.</maml:para>
+          </maml:description>
+          <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+          <dev:type>
+            <maml:name>Int32</maml:name>
+            <maml:uri />
+          </dev:type>
+          <dev:defaultValue>200</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -107,10 +170,22 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="named" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <maml:name>Name</maml:name>
+        <maml:description>
+          <maml:para>For single copy job, name to display in the progress bar and in the returned object.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
+        <dev:type>
+          <maml:name>String</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>Single job</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
         <maml:name>Object</maml:name>
         <maml:description>
-          <maml:para>For multiple copy jobs, a list of names, sources and destinations.</maml:para>
+          <maml:para>For multiple copy jobs, a list of hashtables or objects with the properties Name, Source and Destination.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">ArrayList</command:parameterValue>
         <dev:type>
@@ -120,10 +195,22 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
-        <maml:name>ReportGap</maml:name>
+        <maml:name>NoMirror</maml:name>
         <maml:description>
-          <maml:para>When copying to another network station, simulate lower speeds to get a proper look at the function in action.</maml:para>
-          <maml:para>(I have not been able to test this to see if it works.)</maml:para>
+          <maml:para>Copy with /E instead of /MIR, so files in the destination that do not exist in the source are kept instead of deleted.</maml:para>
+        </maml:description>
+        <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
+        <dev:type>
+          <maml:name>SwitchParameter</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>False</dev:defaultValue>
+      </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>TimeOut</maml:name>
+        <maml:description>
+          <maml:para>Set a timeout, in seconds, for how long to attempt a job before giving up and proceeding.</maml:para>
+          <maml:para>Some files/folders will not copy if the application is active, this is a bypass. If not specified, RoboCopy will keep on trying to copy the files forever. A job that times out is returned with Success set to $false.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
         <dev:type>
@@ -132,63 +219,84 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
+        <maml:name>ReportGap</maml:name>
+        <maml:description>
+          <maml:para>How many milliseconds to wait between each progress bar update.</maml:para>
+          <maml:para>Lower values update the progress bar more often, at the cost of more CPU use.</maml:para>
+        </maml:description>
+        <command:parameterValue required="true" variableLength="false">Int32</command:parameterValue>
+        <dev:type>
+          <maml:name>Int32</maml:name>
+          <maml:uri />
+        </dev:type>
+        <dev:defaultValue>200</dev:defaultValue>
+      </command:parameter>
     </command:parameters>
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.String] for -Source and -Destination</maml:name>
+          <maml:name>System.Collections.ArrayList</maml:name>
         </dev:type>
         <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-      <command:inputType>
-        <dev:type>
-          <maml:name>[System.Collections.ArrayList] containing [System.Collections.Hashtable]</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
+          <maml:para>A list of hashtables or objects with the properties Name, Source and Destination.</maml:para>
         </maml:description>
       </command:inputType>
     </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>The function doesn't output anything, it summons RoboCopy.exe to copy specified folders.</maml:name>
+          <maml:name>System.Management.Automation.PSCustomObject</maml:name>
         </dev:type>
         <maml:description>
-          <maml:para></maml:para>
+          <maml:para>One object per job, with the properties Name, Success and TimeSpan. Success is $false when the job timed out, or when RoboCopy returned an exit code of 8 or higher.</maml:para>
         </maml:description>
       </command:returnValue>
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
         <maml:para>This is primarily a helper-function for my "PSDeepFreezeUtils" project, but the function is without dependencies and can be used on its own.</maml:para>
-        <maml:para>Disclaimer: The code is provided "as is", with all possible faults, defects or errors, and without warranty of any kind. Use this script at your own risk.</maml:para>
-        <maml:para>(c) DoubleThePsycho Technologies.</maml:para>
+        <maml:para>Requires robocopy.exe, which is included in Windows.</maml:para>
+        <maml:para>Disclaimer:</maml:para>
+        <maml:para>The code is provided "as is", with all possible faults, defects or errors, and without warranty of any kind. Use this script at your own risk.</maml:para>
+        <maml:para>(c) 2025-2026 DoubleThePsycho. Licensed under the MIT License.</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
         <maml:title>-------------- Example 1 - Copy a single folder. --------------</maml:title>
-        <dev:code>PS C:\&gt; Copy-WithProgress -Source [SourcePath] -Destination [DestinationPath]
+        <dev:code>PS C:\&gt; Copy-WithProgress -Source C:\Projects -Destination D:\Backup\Projects -Name Projects
 
-This example copies a single entry from -Source to -Destination.</dev:code>
+Name     Success TimeSpan
+----     ------- --------
+Projects    True 00:00:12.3456789</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>This example mirrors C:\Projects to D:\Backup\Projects.</maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
-        <maml:title>-------------- Example 2 - Copy multiple folders. --------------</maml:title>
+        <maml:title>-------------- Example 2 - Copy without deleting. --------------</maml:title>
+        <dev:code>PS C:\&gt; Copy-WithProgress C:\Photos D:\Photos -NoMirror</dev:code>
+        <dev:remarks>
+          <maml:para>This example copies new and changed files from C:\Photos to D:\Photos, and keeps files that only exist in D:\Photos.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>-------------- Example 3 - Copy multiple folders. --------------</maml:title>
         <dev:code>PS C:\&gt; Copy-WithProgress -Object @(
 	@{ Name = "Entry 1";    Source = [Source 1];    Destination = [Destination 1] }
 	@{ Name = "Entry 2";    Source = [Source 2];    Destination = [Destination 2] }
 	@{ Name = "Entry 3";    Source = [Source 3];    Destination = [Destination 3] }
-)
-
-This example runs throug the list of hashtables, copying them one by one from [Source] to [Destination] while displaying the [Name] in the progress bar.</dev:code>
+)</dev:code>
         <dev:remarks>
-          <maml:para></maml:para>
+          <maml:para>This example runs through the list of hashtables, copying them one by one from [Source] to [Destination] while displaying the [Name] in the progress bar.</maml:para>
+        </dev:remarks>
+      </command:example>
+      <command:example>
+        <maml:title>Example 4 - Copy multiple folders through the pipeline, with a timeout.</maml:title>
+        <dev:code>PS C:\&gt; $Jobs | Copy-WithProgress -TimeOut 600 | Where-Object { -not $_.Success }</dev:code>
+        <dev:remarks>
+          <maml:para>This example copies every job in $Jobs, gives up on any job still running after 10 minutes, and lists the jobs that failed.</maml:para>
         </dev:remarks>
       </command:example>
     </command:examples>
@@ -199,7 +307,11 @@ This example runs throug the list of hashtables, copying them one by one from [S
       </maml:navigationLink>
       <maml:navigationLink>
         <maml:linkText>RoboCopy:</maml:linkText>
-        <maml:uri>https://www.google.com/search?q=RoboCopy</maml:uri>
+        <maml:uri>https://learn.microsoft.com/windows-server/administration/windows-commands/robocopy</maml:uri>
+      </maml:navigationLink>
+      <maml:navigationLink>
+        <maml:linkText>Convert-BytesToReadable</maml:linkText>
+        <maml:uri></maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>
   </command:command>

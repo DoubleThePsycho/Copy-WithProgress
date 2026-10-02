@@ -1,0 +1,10 @@
+# Editor and OS files
+.vscode/
+*.code-workspace
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Build and test output
+/out/
+/TestResults/

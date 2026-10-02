@@ -10,17 +10,18 @@
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Returns a string denoting human readable form using Si notation for accuracy.</maml:para>
-      <maml:para>In Si notation, we use the powers of 2 numbers so 1 KiB is 1024 bytes vs. 1 KB which is only 1000 bytes.</maml:para>
+      <maml:para>Returns a string denoting human readable form using binary (IEC) units for accuracy.</maml:para>
+      <maml:para>Binary units use powers of 1024, so 1 KiB is 1024 bytes, while 1 KB is only 1000 bytes.</maml:para>
+      <maml:para>The result is rounded to at most two decimals.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Convert-BytesToReadable</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
           <maml:name>Value</maml:name>
           <maml:description>
-            <maml:para>Supports ridiculously high numbers.</maml:para>
-            <maml:para>Keep in mind, that really large numbers are rounded off for some reason.</maml:para>
+            <maml:para>Number of bytes. Supports ridiculously high numbers.</maml:para>
+            <maml:para>Keep in mind that really large numbers are rounded off, since the value is converted to a double for the division.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">BigInteger</command:parameterValue>
           <dev:type>
@@ -29,10 +30,10 @@
           </dev:type>
           <dev:defaultValue>0</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>Alignment</maml:name>
           <maml:description>
-            <maml:para>Allows you to align the decimal as if using .PadLeft()</maml:para>
+            <maml:para>Allows you to align the number as if using .PadLeft().</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">SByte</command:parameterValue>
           <dev:type>
@@ -44,11 +45,11 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
         <maml:name>Value</maml:name>
         <maml:description>
-          <maml:para>Supports ridiculously high numbers.</maml:para>
-          <maml:para>Keep in mind, that really large numbers are rounded off for some reason.</maml:para>
+          <maml:para>Number of bytes. Supports ridiculously high numbers.</maml:para>
+          <maml:para>Keep in mind that really large numbers are rounded off, since the value is converted to a double for the division.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">BigInteger</command:parameterValue>
         <dev:type>
@@ -57,10 +58,10 @@
         </dev:type>
         <dev:defaultValue>0</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>Alignment</maml:name>
         <maml:description>
-          <maml:para>Allows you to align the decimal as if using .PadLeft()</maml:para>
+          <maml:para>Allows you to align the number as if using .PadLeft().</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">SByte</command:parameterValue>
         <dev:type>
@@ -73,34 +74,36 @@
     <command:inputTypes>
       <command:inputType>
         <dev:type>
-          <maml:name>[System.Numerics.BigInteger] which supports ridiculously high numbers.</maml:name>
+          <maml:name>System.Numerics.BigInteger</maml:name>
         </dev:type>
         <maml:description>
-          <maml:para></maml:para>
+          <maml:para>Supports ridiculously high numbers.</maml:para>
         </maml:description>
       </command:inputType>
     </command:inputTypes>
     <command:returnValues>
       <command:returnValue>
         <dev:type>
-          <maml:name>Human readable string denoting size.</maml:name>
+          <maml:name>System.String</maml:name>
         </dev:type>
         <maml:description>
-          <maml:para></maml:para>
+          <maml:para>Human readable string denoting size.</maml:para>
         </maml:description>
       </command:returnValue>
     </command:returnValues>
     <maml:alertSet>
       <maml:alert>
-        <maml:para>This is primarily a helper-function for my "PSDeepFreezeUtils" project, but the function is without dependencies and can be used on its own.</maml:para>
-        <maml:para>Disclaimer: The code is provided "as is", with all possible faults, defects or errors, and without warranty of any kind. Use this script at your own risk.</maml:para>
-        <maml:para>(c) DoubleThePsycho Technologies.</maml:para>
+        <maml:para>This is primarily a helper-function for Copy-WithProgress, but the function is without dependencies and can be used on its own.</maml:para>
+        <maml:para>The alias Convert-Bytes can be used instead of the full name.</maml:para>
+        <maml:para>Disclaimer:</maml:para>
+        <maml:para>The code is provided "as is", with all possible faults, defects or errors, and without warranty of any kind. Use this script at your own risk.</maml:para>
+        <maml:para>(c) 2025-2026 DoubleThePsycho. Licensed under the MIT License.</maml:para>
       </maml:alert>
     </maml:alertSet>
     <command:examples>
       <command:example>
         <maml:title>---------------- EXAMPLE 1 - Plain conversion. ----------------</maml:title>
-        <dev:code>Convert-BytesToReadable 1125899906842624
+        <dev:code>PS C:\&gt; Convert-BytesToReadable 1125899906842624
 
 1 PiB</dev:code>
         <dev:remarks>
@@ -109,16 +112,16 @@
       </command:example>
       <command:example>
         <maml:title>-------------- EXAMPLE 2 - Pipelined conversion. --------------</maml:title>
-        <dev:code>1125899906842624 | Convert-BytesToReadable
+        <dev:code>PS C:\&gt; 4000000 | Convert-BytesToReadable
 
-1 PiB</dev:code>
+3.81 MiB</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
       </command:example>
       <command:example>
         <maml:title>-------------- EXAMPLE 3 - Conversion with math. --------------</maml:title>
-        <dev:code>Convert-BytesToReadable ([System.Math]::Pow(2, 120))
+        <dev:code>PS C:\&gt; Convert-BytesToReadable ([System.Math]::Pow(2, 120))
 
 1048576 QiB</dev:code>
         <dev:remarks>
@@ -127,7 +130,7 @@
       </command:example>
       <command:example>
         <maml:title>-------- EXAMPLE 4 - Include conversion in a sentence. --------</maml:title>
-        <dev:code>Write-Host ('Total Size: {0}' -f (Convert-BytesToReadable -Value 1125899906842624))
+        <dev:code>PS C:\&gt; Write-Host ('Total size: {0}' -f (Convert-BytesToReadable -Value 1125899906842624))
 
 Total size: 1 PiB</dev:code>
         <dev:remarks>
@@ -136,7 +139,7 @@ Total size: 1 PiB</dev:code>
       </command:example>
       <command:example>
         <maml:title>EXAMPLE 5 - Include conversion in a sentence + aligning number.</maml:title>
-        <dev:code>Write-Host "Total Size: $(Convert-BytesToReadable -Value 1125899906842624 -Alignment 5)"
+        <dev:code>PS C:\&gt; Write-Host "Total size: $(Convert-BytesToReadable -Value 1125899906842624 -Alignment 5)"
 
 Total size:     1 PiB</dev:code>
         <dev:remarks>
@@ -145,9 +148,7 @@ Total size:     1 PiB</dev:code>
       </command:example>
       <command:example>
         <maml:title>-------- EXAMPLE 6 - Some examples for you to try out! --------</maml:title>
-        <dev:code>#	Here are some more examples to try out:
-
-Convert-BytesToReadable -Value 4 -Alignment 9
+        <dev:code>Convert-BytesToReadable -Value 4 -Alignment 9
 Convert-BytesToReadable -Value 4000 -Alignment 9
 Convert-BytesToReadable -Val 4000000 -Ali 9
 Convert-BytesToReadable -V 4000000000 -A 9
@@ -157,8 +158,8 @@ Convert-BytesToReadable 40000000000000000000 9
 Convert-BytesToReadable 4000000000000000000000 9
 Convert-BytesToReadable -Value 4000000000000000000000000 -Alignment 9
 Convert-BytesToReadable -Value 4000000000000000000000000000 -Alignment 9
-Convert-BytesToReadable -Value (\[Int64\]::MaxValue).ToString() -Alignment 9
-Convert-BytesToReadable (\[Decimal\]::MaxValue).ToString() -Alignment 9</dev:code>
+Convert-BytesToReadable -Value ([Int64]::MaxValue).ToString() -Alignment 9
+Convert-BytesToReadable ([Decimal]::MaxValue).ToString() -Alignment 9</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -170,7 +171,7 @@ Convert-BytesToReadable (\[Decimal\]::MaxValue).ToString() -Alignment 9</dev:cod
         <maml:uri>https://github.com/DoubleThePsycho</maml:uri>
       </maml:navigationLink>
       <maml:navigationLink>
-        <maml:linkText>about_Numeric_Literals</maml:linkText>
+        <maml:linkText>Copy-WithProgress</maml:linkText>
         <maml:uri></maml:uri>
       </maml:navigationLink>
     </command:relatedLinks>

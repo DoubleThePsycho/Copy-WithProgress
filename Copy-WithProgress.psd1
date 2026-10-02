@@ -8,7 +8,7 @@
 	RootModule           = "Copy-WithProgress.psm1"
 
 	# Version number of this module.
-	ModuleVersion        = "1.1.0"
+	ModuleVersion        = "1.2.0"
 
 	# Supported PSEditions
 	CompatiblePSEditions = @("Desktop", "Core")
@@ -23,10 +23,10 @@
 	CompanyName          = "DoubleThePsycho Technologies"
 
 	# Copyright statement for this module
-	Copyright            = "(c) DoubleThePsycho Technologies. All rights reserved."
+	Copyright            = "(c) 2025-2026 DoubleThePsycho. Licensed under the MIT License."
 
 	# Description of the functionality provided by this module
-	Description          = "Runs Robocopy in a nested window, displaying a progress bar."
+	Description          = "Copies folders with Robocopy while showing a progress bar."
 
 	# Minimum version of the Windows PowerShell engine required by this module
 	PowerShellVersion    = "5.1"
@@ -98,19 +98,19 @@
 		PSData = @{
 
 			# Tags applied to this module. These help with module discovery in online galleries.
-			# Tags = @()
+			Tags         = @("Robocopy", "Copy", "Progress", "ProgressBar", "Backup", "Windows")
 
 			# A URL to the license for this module.
-			# LicenseUri = ""
+			LicenseUri   = "https://github.com/DoubleThePsycho/Copy-WithProgress/blob/main/LICENSE"
 
 			# A URL to the main website for this project.
-			# ProjectUri = ""
+			ProjectUri   = "https://github.com/DoubleThePsycho/Copy-WithProgress"
 
 			# A URL to an icon representing this module.
 			# IconUri = ""
 
 			# ReleaseNotes of this module
-			# ReleaseNotes = ""
+			ReleaseNotes = "https://github.com/DoubleThePsycho/Copy-WithProgress/blob/main/CHANGELOG.md"
 
 		} # End of PSData hashtable
 
